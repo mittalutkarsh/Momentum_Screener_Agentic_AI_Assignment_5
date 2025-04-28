@@ -1,0 +1,26 @@
+cat > .gitignore << 'EOF'
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment variables
+.env
+
+# Excel outputs
+*.xlsx
+
+# Node / React
+node_modules/
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+EOF
