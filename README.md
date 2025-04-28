@@ -146,6 +146,8 @@ You can specify custom stock lists in the `config.py` file. The format should be
 
 The Momentum Stock Screener is designed to be efficient and scalable. It can handle large datasets and provides detailed statistics and verification of data quality.
 
+```mermaid
+
 flowchart TB
   %%=== Subgraphs for logical layers ===%%
   subgraph CLI_Config ["CLI & Config"]
