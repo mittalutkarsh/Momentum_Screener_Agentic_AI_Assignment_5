@@ -146,57 +146,53 @@ You can specify custom stock lists in the `config.py` file. The format should be
 
 The Momentum Stock Screener is designed to be efficient and scalable. It can handle large datasets and provides detailed statistics and verification of data quality.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
-
-```mermaid
 flowchart TB
   %%=== Subgraphs for logical layers ===%%
-  subgraph CLI & Config
+  subgraph CLI_Config ["CLI & Config"]
     direction TB
-    U[User] --> |runs| Main[<b>momentum_screener_llm.py</b>]
-    ENV[.env<br/>GEMINI_API_KEY] --- Main
+    U[User] --> |runs| Main["momentum_screener_llm.py"]
+    ENV[".env\nGEMINI_API_KEY"] --- Main
   end
 
   subgraph Data_Fetching ["1. Data Fetching"]
     direction LR
-    Main --> |calls| Fetcher[data_fetcher.py]
-    Fetcher --> |yfinance / requests| RawData[Raw Price & Volume Data]
+    Main --> |calls| Fetcher["data_fetcher.py"]
+    Fetcher --> |yfinance / requests| RawData["Raw Price & Volume Data"]
   end
 
   subgraph Processing ["2. Core Processing"]
     direction TB
-    RawData --> VolCalc[VolumeCalculator<br/>(50-day avg)]
-    RawData --> HighCalc[RollingHighCalculator<br/>(52-week high)]
-    RawData --> ProxCalc[ProximityCalculator]
-    RawData --> VolRatio[VolumeRatioCalculator]
-    VolCalc & HighCalc & ProxCalc & VolRatio --> Screener[screener.py<br/>ScreenerEngine]
-    Screener --> ScreenerResult[ScreenerResult JSON]
+    RawData --> VolCalc["VolumeCalculator\n(50-day avg)"]
+    RawData --> HighCalc["RollingHighCalculator\n(52-week high)"]
+    RawData --> ProxCalc["ProximityCalculator"]
+    RawData --> VolRatio["VolumeRatioCalculator"]
+    VolCalc --> Screener["screener.py\nScreenerEngine"]
+    HighCalc --> Screener
+    ProxCalc --> Screener
+    VolRatio --> Screener
+    Screener --> ScreenerResult["ScreenerResult JSON"]
   end
 
   subgraph LLM_Analysis ["3. AI-Enhanced Analysis"]
     direction TB
-    ScreenerResult --> LLMClient[llm_client.py]
-    LLMClient --> |builds system prompt| Prompt[Structured Prompt]
-    Prompt --> |API call| GeminiAPI[Gemini 2.0 Flash Model]
-    GeminiAPI --> |returns| LLMRaw[LLM JSON Response]
-    LLMRaw --> AnalysisProc[analysis.py<br/>AnalysisProcessor]
-    AnalysisProc --> AIResult[Enhanced Analysis JSON]
+    ScreenerResult --> LLMClient["llm_client.py"]
+    LLMClient --> |builds system prompt| Prompt["Structured Prompt"]
+    Prompt --> |API call| GeminiAPI["Gemini 2.0 Flash Model"]
+    GeminiAPI --> |returns| LLMRaw["LLM JSON Response"]
+    LLMRaw --> AnalysisProc["analysis.py\nAnalysisProcessor"]
+    AnalysisProc --> AIResult["Enhanced Analysis JSON"]
   end
 
   subgraph Output ["4. Output & Export"]
     direction LR
-    ScreenerResult --> Exporter[excel_exporter.py]
+    ScreenerResult --> Exporter["excel_exporter.py"]
     AIResult --> Exporter
-    Exporter --> |writes| ExcelFile[Excel Workbook]
-    Main --> |prints| Console[Console Summary & Logs]
+    Exporter --> |writes| ExcelFile["Excel Workbook"]
+    Main --> |prints| Console["Console Summary & Logs"]
   end
 
   %%=== Styling ===%%
   classDef subgraphTitle fill:#efefef,stroke:#ccc,stroke-width:1px,font-weight:bold;
   class Data_Fetching,Processing,LLM_Analysis,Output subgraphTitle;
+
+
